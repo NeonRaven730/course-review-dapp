@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/course-review-dapp/static/css/main.885980ab.css",
+    "main.js": "/course-review-dapp/static/js/main.060512c8.js",
+    "static/js/488.a178d7e1.chunk.js": "/course-review-dapp/static/js/488.a178d7e1.chunk.js",
+    "index.html": "/course-review-dapp/index.html",
+    "main.885980ab.css.map": "/course-review-dapp/static/css/main.885980ab.css.map",
+    "main.060512c8.js.map": "/course-review-dapp/static/js/main.060512c8.js.map",
+    "488.a178d7e1.chunk.js.map": "/course-review-dapp/static/js/488.a178d7e1.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.885980ab.css",
+    "static/js/main.060512c8.js"
+  ]
+}
