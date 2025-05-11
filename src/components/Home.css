@@ -68,11 +68,70 @@
 
 .connect-prompt {
   margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.connect-prompt p {
+.metamask-prompt {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 500px;
+  width: 90%;
+}
+
+.metamask-logo {
+  width: 80px;
+  height: 80px;
   margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.metamask-prompt h2 {
   color: #ffffff;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.metamask-prompt p {
+  color: #ffffff;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.metamask-button {
+  background-color: #f6851b !important;
+  color: #ffffff !important;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.metamask-button:hover {
+  background-color: #e2761b !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .action-buttons {

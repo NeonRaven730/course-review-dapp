@@ -14,13 +14,21 @@ const Home: React.FC = () => {
         
         {!isConnected ? (
           <div className="connect-prompt">
-            <p>Please connect your wallet to get started</p>
-            <button 
-              className="btn btn-primary"
-              onClick={connectWallet}
-            >
-              Connect Wallet
-            </button>
+            <div className="metamask-prompt">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" 
+                alt="MetaMask Logo" 
+                className="metamask-logo"
+              />
+              <h2>Please Connect to MetaMask</h2>
+              <p>To use this platform, you need to connect your MetaMask wallet</p>
+              <button 
+                className="btn btn-primary metamask-button"
+                onClick={connectWallet}
+              >
+                Connect MetaMask Wallet
+              </button>
+            </div>
           </div>
         ) : (
           <div className="action-buttons">
