@@ -39,6 +39,11 @@ contract CourseReview {
     event ReviewSubmitted(uint256 indexed courseId, address indexed reviewer, uint8 rating);
     event ReviewUpdated(uint256 indexed courseId, address indexed reviewer, uint8 newRating);
 
+    // New mappings
+    mapping(uint256 => mapping(uint256 => uint256)) public reviewLikes; // courseId → reviewIndex → likeCount
+    mapping(uint256 => mapping(uint256 => mapping(address => bool))) public hasLiked; // courseId → reviewIndex → user → hasLiked
+    mapping(address => uint256) public userReputation; // Total likes received per user
+
     // Modifiers
     modifier validRating(uint8 rating) {
         require(rating >= 1 && rating <= 5, "Rating must be between 1 and 5");
@@ -160,6 +165,16 @@ contract CourseReview {
                 break;
             }
         }
+    }
+
+    function likeReview(uint256 courseId, uint256 reviewIndex) external {
+        require(!hasLiked[courseId][reviewIndex][msg.sender], "Already liked");
+        
+        reviewLikes[courseId][reviewIndex]++;
+        hasLiked[courseId][reviewIndex][msg.sender] = true;
+        
+        address reviewer = courseReviews[courseId][reviewIndex].reviewer;
+        userReputation[reviewer]++;
     }
 
     // View functions

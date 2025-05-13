@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useWeb3 } from '../context/Web3Context';
 import './Navbar.css';
+import { ethers } from 'ethers';
 
 const Navbar: React.FC = () => {
-  const { account, connectWallet } = useWeb3();
+  const { account, connectWallet, contract } = useWeb3();
+  const [reputation, setReputation] = useState(0);
+
+  useEffect(() => {
+    if (contract && account) {
+      contract.userReputation(account).then((rep: ethers.BigNumber) => 
+        setReputation(rep.toNumber())
+      );
+    }
+  }, [contract, account]);
 
   return (
     <nav className="navbar">
@@ -26,6 +36,9 @@ const Navbar: React.FC = () => {
             Connect Wallet
           </button>
         )}
+      </div>
+      <div className="reputation">
+        Reputation: {reputation} ★
       </div>
     </nav>
   );

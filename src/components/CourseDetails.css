@@ -149,6 +149,30 @@
   color: #dc3545;
 }
 
+.like-button {
+  background: #f0f0f0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.like-button:hover:not(.liked) {
+  background: #e2761b;
+  color: white;
+}
+
+.like-button.liked {
+  background: #4CAF50;
+  color: white;
+  cursor: default;
+}
+
 @media (max-width: 768px) {
   .course-details {
     padding: 1rem;

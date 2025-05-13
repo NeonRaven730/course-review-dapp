@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../context/Web3Context';
 import './CourseDetails.css';
+import LikeButton from './LikeButton';
 
 interface Review {
   reviewer: string;
@@ -10,6 +11,8 @@ interface Review {
   workload: number;
   reviewText: string;
   timestamp: number;
+  likes: number;
+  hasLiked: boolean;
 }
 
 interface Course {
@@ -25,7 +28,7 @@ interface Course {
 const CourseDetails: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const { contract, isConnected } = useWeb3();
+  const { contract, isConnected, account } = useWeb3();
   const [course, setCourse] = useState<Course | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +60,9 @@ const CourseDetails: React.FC = () => {
 
         for (let i = 0; i < reviewCount; i++) {
           const review = await contract.getReview(Number(courseId), i);
+          const likes = await contract.reviewLikes(Number(courseId), i);
+          const hasLiked = await contract.hasLiked(Number(courseId), i, account);
+
           fetchedReviews.push({
             reviewer: review.reviewer,
             rating: review.rating,
@@ -64,6 +70,8 @@ const CourseDetails: React.FC = () => {
             workload: review.workload,
             reviewText: review.reviewText,
             timestamp: review.timestamp.toNumber(),
+            likes: likes.toNumber(),
+            hasLiked
           });
         }
 
@@ -78,7 +86,7 @@ const CourseDetails: React.FC = () => {
     };
 
     fetchCourseDetails();
-  }, [contract, isConnected, courseId]);
+  }, [contract, isConnected, courseId, account]);
 
   if (!isConnected) {
     return (
@@ -185,6 +193,12 @@ const CourseDetails: React.FC = () => {
                   </div>
                 </div>
                 <p className="review-text">{review.reviewText}</p>
+                <LikeButton
+                  courseId={Number(courseId)}
+                  reviewIndex={index}
+                  initialLikes={review.likes}
+                  initialHasLiked={review.hasLiked}
+                />
               </div>
             ))}
           </div>
