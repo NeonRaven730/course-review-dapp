@@ -2,7 +2,7 @@
   "name": "course-review-dapp",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://neonraven730.github.io/course-review-dapp",
+  "homepage": "https://neonraven730.github.io/",
   "dependencies": {
     "@types/node": "^16.18.0",
     "@types/react": "^18.0.0",
