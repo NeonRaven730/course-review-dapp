@@ -155,22 +155,20 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s;
   margin-top: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.like-button:hover:not(.liked) {
-  background: #e2761b;
-  color: white;
-}
-
 .like-button.liked {
   background: #4CAF50;
   color: white;
-  cursor: default;
+}
+
+.like-button:hover:not(.liked) {
+  background: #e0e0e0;
 }
 
 .disabled-like {

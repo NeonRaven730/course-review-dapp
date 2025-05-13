@@ -22,8 +22,8 @@ const AddCourse: React.FC = () => {
       return;
     }
 
-    // Debug: Log available methods
-    console.log('Contract methods:', Object.keys(contract.functions));
+    // // Debug: Log available methods
+    // console.log('Contract methods:', Object.keys(contract.functions));
 
     // Validate course code format
     const isValidCode = /^[A-Za-z]{4}\d{4}$/.test(code);

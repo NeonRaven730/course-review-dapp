@@ -39,7 +39,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     <button
       onClick={handleLike}
       disabled={isOwner}
-      className={`like-button ${isOwner ? 'disabled-like' : ''}`}
+      className={`like-button ${hasLiked ? 'liked' : ''} ${isOwner ? 'disabled-like' : ''}`}
     >
       👍 {likes}
     </button>

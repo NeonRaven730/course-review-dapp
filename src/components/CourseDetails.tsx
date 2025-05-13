@@ -13,6 +13,7 @@ interface Review {
   timestamp: number;
   likes: number;
   hasLiked: boolean;
+  originalIndex: number;
 }
 
 interface Course {
@@ -57,11 +58,10 @@ const CourseDetails: React.FC = () => {
         // Fetch reviews
         const reviewCount = await contract.getReviewCount(Number(courseId));
         const fetchedReviews: Review[] = [];
-
-        for (let i = 0; i < reviewCount; i++) {
-          const review = await contract.getReview(Number(courseId), i);
-          const likes = await contract.reviewLikes(Number(courseId), i);
-          const hasLiked = await contract.hasLiked(Number(courseId), i, account);
+        for (let originalIndex = 0; originalIndex < reviewCount; originalIndex++) {
+          const review = await contract.getReview(Number(courseId), originalIndex);
+          const likes = (await contract.reviewLikes(Number(courseId), originalIndex)).toNumber();
+          const hasLiked = await contract.hasLiked(Number(courseId), originalIndex, account);
 
           fetchedReviews.push({
             reviewer: review.reviewer,
@@ -70,12 +70,13 @@ const CourseDetails: React.FC = () => {
             workload: review.workload,
             reviewText: review.reviewText,
             timestamp: review.timestamp.toNumber(),
-            likes: likes.toNumber(),
-            hasLiked
+            likes,
+            hasLiked,
+            originalIndex
           });
         }
 
-        // Sort reviews by timestamp (newest first)
+        // Then sort by timestamp (newest first)
         setReviews(fetchedReviews.sort((a, b) => b.timestamp - a.timestamp));
       } catch (err) {
         console.error('Error fetching course details:', err);
@@ -195,7 +196,7 @@ const CourseDetails: React.FC = () => {
                 <p className="review-text">{review.reviewText}</p>
                 <LikeButton
                   courseId={Number(courseId)}
-                  reviewIndex={index}
+                  reviewIndex={review.originalIndex}
                   initialLikes={review.likes}
                   initialHasLiked={review.hasLiked}
                   review={review}
