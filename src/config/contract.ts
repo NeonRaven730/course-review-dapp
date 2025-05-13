@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x19800EE2C38992b87DC6e1919b5BBC16dfB8A9F8";
+export const CONTRACT_ADDRESS = "0x5FBD455348d15a3709bB8ce8De37b9E4AD3E5cAC";
 
 export const CONTRACT_ABI = [
 	{
@@ -13,7 +13,7 @@ export const CONTRACT_ABI = [
 			{
 				"indexed": false,
 				"internalType": "string",
-				"name": "name",
+				"name": "code",
 				"type": "string"
 			},
 			{
@@ -112,7 +112,7 @@ export const CONTRACT_ABI = [
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "name",
+				"name": "code",
 				"type": "string"
 			},
 			{
@@ -139,6 +139,25 @@ export const CONTRACT_ABI = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "courseExists",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -205,7 +224,7 @@ export const CONTRACT_ABI = [
 		"outputs": [
 			{
 				"internalType": "string",
-				"name": "name",
+				"name": "code",
 				"type": "string"
 			},
 			{
@@ -254,7 +273,7 @@ export const CONTRACT_ABI = [
 		"outputs": [
 			{
 				"internalType": "string",
-				"name": "name",
+				"name": "code",
 				"type": "string"
 			},
 			{
@@ -502,39 +521,6 @@ export const CONTRACT_ABI = [
 			}
 		],
 		"name": "submitReview",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "courseId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint8",
-				"name": "newRating",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "newDifficulty",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint8",
-				"name": "newWorkload",
-				"type": "uint8"
-			},
-			{
-				"internalType": "string",
-				"name": "newReviewText",
-				"type": "string"
-			}
-		],
-		"name": "updateReview",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

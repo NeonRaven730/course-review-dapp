@@ -4,7 +4,7 @@ import './SubmitReview.css';
 
 interface Course {
   id: number;
-  name: string;
+  code: string;
   professor: string;
   department: string;
 }
@@ -37,7 +37,7 @@ const SubmitReview: React.FC = () => {
           const course = await contract.getCourse(i);
           fetchedCourses.push({
             id: i,
-            name: course.name,
+            code: course.code,
             professor: course.professor,
             department: course.department,
           });
@@ -168,7 +168,7 @@ const SubmitReview: React.FC = () => {
             <option value="">Select a course...</option>
             {availableCourses.map((course) => (
               <option key={course.id} value={course.id}>
-                {course.name} - {course.professor} ({course.department})
+                {course.code} - {course.professor} ({course.department})
               </option>
             ))}
           </select>

@@ -12,7 +12,7 @@ contract CourseReview {
     }
 
     struct Course {
-        string name;
+        string code;        // Primary identifier (e.g., "COMP4541")
         string professor;
         string department;
         uint256 totalReviews;
@@ -22,27 +22,25 @@ contract CourseReview {
     }
 
     // State variables
-    mapping(uint256 => Course) public courses;
+    mapping(string => bool) public courseExists; // Tracks by course code
+    mapping(uint256 => Course) public courses;   // Indexed by auto-increment ID
     mapping(uint256 => Review[]) public courseReviews;
     mapping(address => mapping(uint256 => bool)) public hasReviewed;
     mapping(address => uint256) public lastReviewTimestamp;
-    
-    // New mapping to track existing courses
-    mapping(bytes32 => bool) private courseExists;
     
     uint256 public courseCount;
     uint256 public constant MIN_REVIEW_LENGTH = 10;
     uint256 public constant MAX_REVIEW_LENGTH = 1000;
 
     // Events
-    event CourseAdded(uint256 indexed courseId, string name, string professor, string department);
+    event CourseAdded(uint256 indexed courseId, string code, string professor, string department);
     event ReviewSubmitted(uint256 indexed courseId, address indexed reviewer, uint8 rating);
     event ReviewUpdated(uint256 indexed courseId, address indexed reviewer, uint8 newRating);
 
-    // New mappings
-    mapping(uint256 => mapping(uint256 => uint256)) public reviewLikes; // courseId → reviewIndex → likeCount
-    mapping(uint256 => mapping(uint256 => mapping(address => bool))) public hasLiked; // courseId → reviewIndex → user → hasLiked
-    mapping(address => uint256) public userReputation; // Total likes received per user
+    // Reputation system
+    mapping(uint256 => mapping(uint256 => uint256)) public reviewLikes;
+    mapping(uint256 => mapping(uint256 => mapping(address => bool))) public hasLiked;
+    mapping(address => uint256) public userReputation;
 
     // Modifiers
     modifier validRating(uint8 rating) {
@@ -62,28 +60,20 @@ contract CourseReview {
         _;
     }
 
-    // Helper function to generate course hash
-    function getCourseHash(
-        string memory name,
-        string memory professor,
-        string memory department
-    ) private pure returns (bytes32) {
-        return keccak256(abi.encodePacked(name, professor, department));
-    }
-
-    // Functions
+    // Course Management
     function addCourse(
-        string memory name,
+        string memory code,
         string memory professor,
         string memory department
     ) external {
-        // Check if course already exists
-        bytes32 courseHash = getCourseHash(name, professor, department);
-        require(!courseExists[courseHash], "Course already exists");
+        require(!courseExists[code], "Course code already exists");
+        require(bytes(code).length == 8, "Course code must be exactly 8 characters long");
+        require(bytes(code).length > 0, "Course code cannot be empty");
+        require(isValidCourseCode(code), "Course code must be 4 letters followed by 4 digits");
 
-        uint256 courseId = courseCount;
+        uint256 courseId = courseCount++;
         courses[courseId] = Course({
-            name: name,
+            code: code,
             professor: professor,
             department: department,
             totalReviews: 0,
@@ -91,14 +81,12 @@ contract CourseReview {
             totalDifficulty: 0,
             totalWorkload: 0
         });
-        
-        // Mark course as existing
-        courseExists[courseHash] = true;
-        courseCount++;
-        
-        emit CourseAdded(courseId, name, professor, department);
+
+        courseExists[code] = true;
+        emit CourseAdded(courseId, code, professor, department);
     }
 
+    // Review System
     function submitReview(
         uint256 courseId,
         uint8 rating,
@@ -119,56 +107,21 @@ contract CourseReview {
             timestamp: block.timestamp
         }));
 
-        // Update course statistics
+        // Update course stats
         course.totalReviews++;
         course.totalRating += rating;
         course.totalDifficulty += difficulty;
         course.totalWorkload += workload;
 
-        // Mark as reviewed
         hasReviewed[msg.sender][courseId] = true;
         lastReviewTimestamp[msg.sender] = block.timestamp;
-
         emit ReviewSubmitted(courseId, msg.sender, rating);
     }
 
-    function updateReview(
-        uint256 courseId,
-        uint8 newRating,
-        uint8 newDifficulty,
-        uint8 newWorkload,
-        string memory newReviewText
-    ) external validRating(newRating) validRating(newDifficulty) validRating(newWorkload) 
-      validReviewLength(newReviewText) {
-        require(courseId < courseCount, "Invalid course ID");
-        require(hasReviewed[msg.sender][courseId], "No review found");
-
-        Review[] storage reviews = courseReviews[courseId];
-        Course storage course = courses[courseId];
-        
-        // Find and update the review
-        for (uint256 i = 0; i < reviews.length; i++) {
-            if (reviews[i].reviewer == msg.sender) {
-                // Update course statistics
-                course.totalRating = course.totalRating - reviews[i].rating + newRating;
-                course.totalDifficulty = course.totalDifficulty - reviews[i].difficulty + newDifficulty;
-                course.totalWorkload = course.totalWorkload - reviews[i].workload + newWorkload;
-
-                // Update review
-                reviews[i].rating = newRating;
-                reviews[i].difficulty = newDifficulty;
-                reviews[i].workload = newWorkload;
-                reviews[i].reviewText = newReviewText;
-                reviews[i].timestamp = block.timestamp;
-
-                emit ReviewUpdated(courseId, msg.sender, newRating);
-                break;
-            }
-        }
-    }
-
+    // Reputation System
     function likeReview(uint256 courseId, uint256 reviewIndex) external {
         require(!hasLiked[courseId][reviewIndex][msg.sender], "Already liked");
+        require(reviewIndex < courseReviews[courseId].length, "Invalid review");
         
         reviewLikes[courseId][reviewIndex]++;
         hasLiked[courseId][reviewIndex][msg.sender] = true;
@@ -177,9 +130,9 @@ contract CourseReview {
         userReputation[reviewer]++;
     }
 
-    // View functions
+    // View Functions
     function getCourse(uint256 courseId) external view returns (
-        string memory name,
+        string memory code,
         string memory professor,
         string memory department,
         uint256 totalReviews,
@@ -191,7 +144,7 @@ contract CourseReview {
         Course storage course = courses[courseId];
         
         return (
-            course.name,
+            course.code,
             course.professor,
             course.department,
             course.totalReviews,
@@ -210,7 +163,7 @@ contract CourseReview {
         uint256 timestamp
     ) {
         require(courseId < courseCount, "Invalid course ID");
-        require(reviewIndex < courseReviews[courseId].length, "Invalid review index");
+        require(reviewIndex < courseReviews[courseId].length, "Invalid review");
         
         Review storage review = courseReviews[courseId][reviewIndex];
         return (
@@ -226,5 +179,25 @@ contract CourseReview {
     function getReviewCount(uint256 courseId) external view returns (uint256) {
         require(courseId < courseCount, "Invalid course ID");
         return courseReviews[courseId].length;
+    }
+
+    function isValidCourseCode(string memory code) private pure returns (bool) {
+        bytes memory codeBytes = bytes(code);
+        if (codeBytes.length != 8) return false;
+
+        for (uint256 i = 0; i < 4; i++) {
+            if (!(codeBytes[i] >= 0x41 && codeBytes[i] <= 0x5A) && // A-Z
+                !(codeBytes[i] >= 0x61 && codeBytes[i] <= 0x7A)) { // a-z
+                return false;
+            }
+        }
+
+        for (uint256 i = 4; i < 8; i++) {
+            if (!(codeBytes[i] >= 0x30 && codeBytes[i] <= 0x39)) { // 0-9
+                return false;
+            }
+        }
+
+        return true;
     }
 } 

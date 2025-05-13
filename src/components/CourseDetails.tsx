@@ -16,7 +16,7 @@ interface Review {
 }
 
 interface Course {
-  name: string;
+  code: string;
   professor: string;
   department: string;
   totalReviews: number;
@@ -45,7 +45,7 @@ const CourseDetails: React.FC = () => {
         // Fetch course details
         const courseData = await contract.getCourse(Number(courseId));
         setCourse({
-          name: courseData.name,
+          code: courseData.code,
           professor: courseData.professor,
           department: courseData.department,
           totalReviews: courseData.totalReviews.toNumber(),
@@ -129,7 +129,7 @@ const CourseDetails: React.FC = () => {
       </button>
 
       <div className="course-header">
-        <h1>{course.name}</h1>
+        <h1>{course.code}</h1>
         <p className="professor">Professor: {course.professor}</p>
         <p className="department">Department: {course.department}</p>
       </div>

@@ -4,7 +4,7 @@ import { useWeb3 } from '../context/Web3Context';
 import './CourseList.css';
 
 interface Course {
-  name: string;
+  code: string;
   professor: string;
   department: string;
   totalReviews: number;
@@ -35,7 +35,7 @@ const CourseList: React.FC = () => {
         for (let i = 0; i < courseCount; i++) {
           const course = await contract.getCourse(i);
           fetchedCourses.push({
-            name: course.name,
+            code: course.code,
             professor: course.professor,
             department: course.department,
             totalReviews: course.totalReviews.toNumber(),
@@ -58,7 +58,7 @@ const CourseList: React.FC = () => {
   }, [contract, isConnected]);
 
   const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          course.professor.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDepartment = !departmentFilter || course.department === departmentFilter;
     return matchesSearch && matchesDepartment;
@@ -120,7 +120,7 @@ const CourseList: React.FC = () => {
         <div className="courses-grid">
           {filteredCourses.map((course, index) => (
             <Link to={`/courses/${index}`} key={index} className="course-card">
-              <h3>{course.name}</h3>
+              <h3>{course.code}</h3>
               <p className="professor">Professor: {course.professor}</p>
               <p className="department">Department: {course.department}</p>
               <div className="course-stats">

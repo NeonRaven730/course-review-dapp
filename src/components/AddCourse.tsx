@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useWeb3 } from '../context/Web3Context';
 import './AddCourse.css';
+import { ethers } from 'ethers';
 
 const AddCourse: React.FC = () => {
-  const { contract, isConnected } = useWeb3();
-  const [name, setName] = useState('');
+  const { contract, isConnected, account } = useWeb3();
+  const [code, setCode] = useState('');
   const [professor, setProfessor] = useState('');
   const [department, setDepartment] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,27 +14,36 @@ const AddCourse: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(false);
 
-    if (!contract || !isConnected) {
-      setError('Please connect your wallet first.');
+    if (!contract || !account) {
+      setError('Contract or account not initialized');
+      return;
+    }
+
+    // Debug: Log available methods
+    console.log('Contract methods:', Object.keys(contract.functions));
+
+    // Validate course code format
+    const isValidCode = /^[A-Za-z]{4}\d{4}$/.test(code);
+    if (!isValidCode) {
+      setError('Course code must be 4 letters followed by 4 digits (e.g., COMP1234)');
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
-      setSuccess(false);
-
-      const tx = await contract.addCourse(name, professor, department);
+      const tx = await (contract as ethers.Contract).addCourse(code, professor, department);
       await tx.wait();
-
+      console.log('Transaction:', tx);
       setSuccess(true);
-      setName('');
+      setCode('');
       setProfessor('');
       setDepartment('');
     } catch (err) {
-      console.error('Error adding course:', err);
-      setError('Failed to add course. Please try again.');
+      console.error('Full error:', err);
+      setError('Failed to add course. See console for details.');
     } finally {
       setLoading(false);
     }
@@ -52,20 +62,18 @@ const AddCourse: React.FC = () => {
   return (
     <div className="add-course">
       <h2>Add New Course</h2>
-
       <form onSubmit={handleSubmit} className="course-form">
         <div className="form-group">
-          <label htmlFor="name">Course ID:</label>
+          <label htmlFor="code">Course Code:</label>
           <input
-            id="name"
+            id="code"
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
             required
-            placeholder="e.g. COMP4541"
+            placeholder="Enter 4 letters followed by 4 digits"
           />
         </div>
-
         <div className="form-group">
           <label htmlFor="professor">Professor:</label>
           <input
@@ -74,10 +82,9 @@ const AddCourse: React.FC = () => {
             value={professor}
             onChange={(e) => setProfessor(e.target.value)}
             required
-            placeholder="e.g. John Smith"
+            placeholder="Enter professor name"
           />
         </div>
-
         <div className="form-group">
           <label htmlFor="department">Department:</label>
           <input
@@ -86,22 +93,12 @@ const AddCourse: React.FC = () => {
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             required
-            placeholder="e.g. Computer Science"
+            placeholder="Enter department name"
           />
         </div>
-
         {error && <div className="error">{error}</div>}
-        {success && (
-          <div className="success">
-            Course added successfully!
-          </div>
-        )}
-
-        <button
-          type="submit"
-          className="submit-button"
-          disabled={loading}
-        >
+        {success && <div className="success">Course added successfully!</div>}
+        <button type="submit" className="submit-button" disabled={loading}>
           {loading ? 'Adding Course...' : 'Add Course'}
         </button>
       </form>
