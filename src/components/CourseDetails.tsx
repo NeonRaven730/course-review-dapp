@@ -198,6 +198,8 @@ const CourseDetails: React.FC = () => {
                   reviewIndex={index}
                   initialLikes={review.likes}
                   initialHasLiked={review.hasLiked}
+                  review={review}
+                  currentUser={account || ''}
                 />
               </div>
             ))}

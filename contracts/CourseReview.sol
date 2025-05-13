@@ -120,14 +120,13 @@ contract CourseReview {
 
     // Reputation System
     function likeReview(uint256 courseId, uint256 reviewIndex) external {
+        Review storage review = courseReviews[courseId][reviewIndex];
+        require(review.reviewer != msg.sender, "Cannot like your own review");
         require(!hasLiked[courseId][reviewIndex][msg.sender], "Already liked");
-        require(reviewIndex < courseReviews[courseId].length, "Invalid review");
         
         reviewLikes[courseId][reviewIndex]++;
         hasLiked[courseId][reviewIndex][msg.sender] = true;
-        
-        address reviewer = courseReviews[courseId][reviewIndex].reviewer;
-        userReputation[reviewer]++;
+        userReputation[review.reviewer]++;
     }
 
     // View Functions

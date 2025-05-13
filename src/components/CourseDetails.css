@@ -173,6 +173,11 @@
   cursor: default;
 }
 
+.disabled-like {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .course-details {
     padding: 1rem;

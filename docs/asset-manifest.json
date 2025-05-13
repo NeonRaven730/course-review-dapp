@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/course-review-dapp/static/css/main.6550d01d.css",
-    "main.js": "/course-review-dapp/static/js/main.ea3120b4.js",
+    "main.css": "/course-review-dapp/static/css/main.7c9295f7.css",
+    "main.js": "/course-review-dapp/static/js/main.b1c1cbe6.js",
     "static/js/488.a178d7e1.chunk.js": "/course-review-dapp/static/js/488.a178d7e1.chunk.js",
     "index.html": "/course-review-dapp/index.html",
-    "main.6550d01d.css.map": "/course-review-dapp/static/css/main.6550d01d.css.map",
-    "main.ea3120b4.js.map": "/course-review-dapp/static/js/main.ea3120b4.js.map",
+    "main.7c9295f7.css.map": "/course-review-dapp/static/css/main.7c9295f7.css.map",
+    "main.b1c1cbe6.js.map": "/course-review-dapp/static/js/main.b1c1cbe6.js.map",
     "488.a178d7e1.chunk.js.map": "/course-review-dapp/static/js/488.a178d7e1.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.6550d01d.css",
-    "static/js/main.ea3120b4.js"
+    "static/css/main.7c9295f7.css",
+    "static/js/main.b1c1cbe6.js"
   ]
 }

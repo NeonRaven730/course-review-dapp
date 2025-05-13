@@ -6,17 +6,23 @@ interface LikeButtonProps {
   reviewIndex: number;
   initialLikes: number;
   initialHasLiked: boolean;
+  review: any;
+  currentUser: string;
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({
   courseId,
   reviewIndex,
   initialLikes,
-  initialHasLiked
+  initialHasLiked,
+  review,
+  currentUser
 }) => {
   const { contract, account } = useWeb3();
   const [likes, setLikes] = useState(initialLikes);
   const [hasLiked, setHasLiked] = useState(initialHasLiked);
+
+  const isOwner = review.reviewer.toLowerCase() === currentUser.toLowerCase();
 
   const handleLike = async () => {
     if (!contract || !account) return;
@@ -32,8 +38,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({
   return (
     <button
       onClick={handleLike}
-      disabled={hasLiked}
-      className={`like-button ${hasLiked ? 'liked' : ''}`}
+      disabled={isOwner}
+      className={`like-button ${isOwner ? 'disabled-like' : ''}`}
     >
       👍 {likes}
     </button>
