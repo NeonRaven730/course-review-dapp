@@ -41,9 +41,28 @@ const AddCourse: React.FC = () => {
       setCode('');
       setProfessor('');
       setDepartment('');
-    } catch (err) {
-      console.error('Full error:', err);
-      setError('Failed to add course. See console for details.');
+    } catch (err: any) {
+      console.error('Error adding course:', err);
+      
+      // Extract revert reason from error
+      let errorMessage = 'Failed to add course';
+      if (err.data?.message) {
+        // For MetaMask errors
+        errorMessage = err.data.message.replace('execution reverted: ', '');
+      } else if (err.reason) {
+        // For ethers.js errors
+        errorMessage = err.reason;
+      } else if (err.message) {
+        // For other errors
+        errorMessage = err.message;
+      }
+
+      // Display the revert reason directly
+      if (errorMessage.includes('Course code already exists')) {
+        setError('Course code already exists');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
