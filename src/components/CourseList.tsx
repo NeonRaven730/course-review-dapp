@@ -4,6 +4,7 @@ import { useWeb3 } from '../context/Web3Context';
 import './CourseList.css';
 
 interface Course {
+  id: number;
   code: string;
   professor: string;
   department: string;
@@ -35,6 +36,7 @@ const CourseList: React.FC = () => {
         for (let i = 0; i < courseCount; i++) {
           const course = await contract.getCourse(i);
           fetchedCourses.push({
+            id: i,
             code: course.code,
             professor: course.professor,
             department: course.department,
@@ -118,8 +120,8 @@ const CourseList: React.FC = () => {
         <div className="no-results">No courses found matching your criteria</div>
       ) : (
         <div className="courses-grid">
-          {filteredCourses.map((course, index) => (
-            <Link to={`/courses/${index}`} key={index} className="course-card">
+          {filteredCourses.map((course) => (
+            <Link to={`/courses/${course.id}`} key={course.id} className="course-card">
               <h3>{course.code}</h3>
               <p className="professor">Professor: {course.professor}</p>
               <p className="department">Department: {course.department}</p>
